@@ -158,11 +158,13 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
    */
   willUpdate(changedProperties) {
     if (this.min > this.max) {
-      [this.min, this.max] = [this.max, this.min];
+      var temp = this.min;
+      this.min = this.max;
+      this.max = temp;
     }
-    if (this.counter < this.min) this.counter = this.min;
-    if (this.counter > this.max) this.counter = this.max;
-    super.willUpdate?.(changedProperties);
+    if (this.counter < this.min) { this.counter = this.min; }
+    if (this.counter > this.max) { this.counter = this.max; }
+    if (super.willUpdate) { super.willUpdate(changedProperties); }
   }
 
   /**
@@ -205,21 +207,21 @@ export class CounterApp extends DDDSuper(I18NMixin(LitElement)) {
    * Only loads the confetti code when actually needed (at 21).
    */
   makeItRain() {
-    import("@haxtheweb/multiple-choice/lib/confetti-container.js").then(() => {
-      setTimeout(() => {
-        const confetti = this.shadowRoot?.querySelector("#confetti");
+    import("@haxtheweb/multiple-choice/lib/confetti-container.js").then(function() {
+      setTimeout(function() {
+        var confetti = this.shadowRoot && this.shadowRoot.querySelector("#confetti");
         if (confetti) {
           confetti.setAttribute("popped", "");
         }
-      }, 0);
-    });
+      }.bind(this), 0);
+    }.bind(this));
   }
 
   /**
    * HAX editor integration — points to the haxProperties config file
    */
   static get haxProperties() {
-    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url).href;
+    return new URL("./lib/" + CounterApp.tag + ".haxProperties.json", import.meta.url).href;
   }
 }
 
